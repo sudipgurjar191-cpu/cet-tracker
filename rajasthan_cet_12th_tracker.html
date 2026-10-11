@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rajasthan CET 12th Level Tracker</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--text:#182230;--muted:#667085;--line:#e5e7eb;--accent:#5b4bdb;--accent2:#e9e7ff;--green:#15803d;--soft:#f8fafc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text)}
+header{background:linear-gradient(135deg,#35258d,#7066e8);color:#fff;padding:28px 18px 34px}
+.wrap{max-width:900px;margin:auto;padding:0 14px}h1{margin:0 0 8px;font-size:clamp(1.55rem,4vw,2.3rem)}header p{margin:0;color:#ecebff}
+main{margin:-18px auto 36px;position:relative}.panel,.subject{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #17255408}
+.stats{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.big{font-size:2rem;font-weight:800;color:var(--accent)}.muted{color:var(--muted);font-size:.9rem}
+.track{height:10px;background:#e9eaf2;border-radius:20px;overflow:hidden;margin:12px 0}.fill{height:100%;width:0;background:linear-gradient(90deg,#5b4bdb,#23a36d);transition:width .2s}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}button,select,input[type=search]{font:inherit;border-radius:10px;padding:10px 12px;border:1px solid var(--line);background:white;color:var(--text)}button{cursor:pointer;font-weight:650}button.primary{background:var(--accent);border-color:var(--accent);color:white}button:hover{filter:brightness(.97)}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #c4bfff;outline-offset:2px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}.filters input{flex:1;min-width:180px}.filters select{max-width:100%}
+.subject-head{display:flex;gap:12px;align-items:center;cursor:pointer}.subject-head h2{font-size:1rem;margin:0 0 5px}.subject-head .meta{color:var(--muted);font-size:.85rem}.subject-head .pct{margin-left:auto;font-weight:750;color:var(--accent);white-space:nowrap}.mini{height:5px;background:#eeeef5;border-radius:20px;margin-top:10px;overflow:hidden}.mini div{height:100%;background:var(--green)}
+.items{border-top:1px solid var(--line);margin-top:14px;padding-top:8px}.item{display:flex;align-items:flex-start;gap:10px;padding:9px 3px;line-height:1.4;border-radius:8px}.item:hover{background:var(--soft)}.item input{width:18px;height:18px;margin-top:2px;accent-color:var(--green);flex-shrink:0}.item.done span{text-decoration:line-through;color:var(--muted)}
+.notice{font-size:.86rem;line-height:1.5;color:var(--muted)}.hidden{display:none!important}.footer{font-size:.82rem;color:var(--muted);text-align:center;padding:4px 0 20px}.empty{padding:18px;color:var(--muted);text-align:center}
+@media(max-width:520px){.panel,.subject{padding:14px}.controls button{flex:1}.big{font-size:1.7rem}.subject-head .pct{font-size:.9rem}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>📚 Rajasthan CET 12th Level Tracker</h1><p>Track your syllabus progress, one topic at a time.</p></div></header>
+<main class="wrap">
+<section class="panel">
+ <div class="stats"><div><div class="big" id="overallPct">0%</div><div class="muted">Overall progress</div></div><div><strong id="count">0 / 0 topics</strong><div class="muted">completed</div></div></div>
+ <div class="track"><div class="fill" id="overallFill"></div></div>
+ <div class="controls">
+  <button class="primary" id="allBtn">All topics</button><button id="pendingBtn">Pending only</button><button id="doneBtn">Completed only</button>
+ </div>
+ <div class="filters"><input id="search" type="search" placeholder="Search a topic or subject…"><select id="subjectFilter"><option value="">All subjects</option></select></div>
+ <div class="controls"><button id="exportBtn">⬇ Export progress backup</button><button id="importBtn">⬆ Import backup</button><button id="resetBtn">Reset progress</button><input class="hidden" type="file" id="fileInput" accept="application/json"></div>
+ <p class="notice">Your checkmarks are saved automatically in this browser on this device. To move progress to another device, use “Export progress backup”, then import that file there. Clearing browser data may erase saved progress.</p>
+</section>
+<div id="subjects"></div>
+<div class="footer">Study tip: mark a topic complete after revising it and practising questions.</div>
+</main>
+<script>
+const subjects = [
+["1. History of Rajasthan",["Major ancient civilizations and archaeological sites","Prominent rulers and their achievements","Revolt of 1857","Peasant movements","Tribal movements","Praja Mandal movements","Integration of Rajasthan","Prominent historical personalities"]],
+["2. Art and Culture of Rajasthan",["Architecture and painting","Folk music","Musical instruments","Folk dances","Folk theatre","Major religious sects","Folk deities","Dresses and ornaments","Fairs and festivals","Customs and traditions","Languages and dialects","Literature","Prominent personalities in art and culture"]],
+["3. Geography of India",["Mountains, plateaus, deserts and plains","Major rivers","Dams","Lakes","Oceans","Wildlife and sanctuaries","Disaster management","Climate change"]],
+["4. Geography of Rajasthan",["Major physical features","Climatic conditions","Natural vegetation","Major soils","Rivers, dams and lakes","Mineral, forest and water resources","Livestock","Wildlife, sanctuaries and conservation","Population distribution, growth and density","Literacy and sex ratio","Major tribes","Tourism in Rajasthan"]],
+["5. Indian Political System and Rajasthan",["Nature of the Constitution","Preamble","Fundamental Rights","Directive Principles of State Policy","President","Prime Minister and Council of Ministers","Parliament","Supreme Court","Election Commission","Rajasthan Governor","Rajasthan Chief Minister","State Legislative Assembly","Rajasthan High Court","RPSC","State Election Commission","State Information Commission","State Human Rights Commission","State Chief Secretary","District Administration","Local self-government","Panchayati Raj"]],
+["6. Economy of Rajasthan",["Role of industry in development","Agriculture and animal husbandry","Mineral sector","Features and issues of the state economy","State income and budget","Handicraft industry","Unemployment","Drought and famine","Welfare schemes and Acts","Development institutions","Small-scale enterprises","Financial institutions","Panchayati Raj in rural development","MGNREGA","VB-G RAM G"]],
+["7. Everyday Science",["Physical and chemical changes","Oxidation and reduction","Catalysts","Metals, non-metals and important compounds","Compounds used in daily life","Carbon and its important compounds","Hydrocarbons","Allotropes of carbon","CFCs/Freons and CNG","Polymers, soaps and detergents","Reflection of light and its laws","Dispersion of light","Types of lenses","Vision defects and their correction","Space, IT and India's space research programme","Genetics terminology","Mendel's laws","Chromosome structure","Nucleic acids","Central dogma of protein synthesis","Human sex determination","Ecosystem structure and biotic factors","Energy flow and biogeochemical cycles","Biotechnology and bio-patents","New plant varieties and transgenic organisms","Economic importance of plants and animals","Blood groups, transfusion and Rh factor","Pathogens and human health","Malnutrition and human health","Human diseases, causes and cures"]],
+["8. Logical Reasoning and Mathematics",["Blood relations","Number series","Alphabet series","Clock","Calendar","Coding and decoding","Seating arrangement","Mental ability","Analytical ability","LCM and HCF","Average","Profit and loss","Percentage","Simple and compound interest","Ratio and proportion","Time, speed and distance","Work and time","Area of triangle, circle, ellipse and rectangle","Sphere and cylinder (as worded in syllabus)","Volume of sphere, cylinder, cube and cone","Graphical representation of data","Graphs","Bar charts","Pie charts","Line graphs"]],
+["9. Current Affairs",["Major contemporary state and national events","Political developments","Economic developments","Social and cultural events","Technology and geography-related events","Ecology and environmental events","Sports","Famous personalities","State and national programmes and policies","Fundamental Duties and moral values","Rajasthan Public Examination Act, 2022: salient provisions"]],
+["10. Public Health",["Basics of first aid","CPR","Types of drug abuse","Prevention of drug abuse","Youth physical fitness","Youth mental fitness","Health risks of social media addiction","Preventive measures for social media addiction"]],
+["11. Computer Knowledge",["Characteristics and applications of computers","Computer organization","RAM and ROM","File system","Input and output devices","MS Word","MS Excel and spreadsheets","MS PowerPoint"]],
+["12. General Hindi",["Noun (Sangya)","Pronoun (Sarvanam)","Adjective (Visheshan)","Indeclinables (Avyay)","Verb (Kriya)","Sandhi and Sandhi-Viched","Samas and Samas-Vigrah","Prefixes (Upsarg)","Suffixes (Pratyay)","Synonyms","Antonyms","Multiple-meaning words","Word pairs","Spelling correction","Sentence correction","One-word substitution","Idioms and proverbs","Hindi equivalents of English technical terms","Official letters and office orders","Circulars and notifications","Demi-official letters, tenders and press releases"]],
+["13. General English",["Tenses and sequence of tenses","Active and passive voice","Direct and indirect narration","Articles and determiners","Prepositions","Translation of common Hindi-English sentences","Official and technical glossary with Hindi versions","Synonyms","Antonyms","One-word substitution","Comprehension","Official letter writing","Demi-official letter writing","Informal letter writing"]]
+];
+const STORE="rajasthanCET12Tracker_v1"; let done={}; let mode="all"; let openSubjects=new Set(subjects.map(s=>s[0]));
+try{done=JSON.parse(localStorage.getItem(STORE)||"{}")}catch(e){done={}}
+const allTopics=()=>subjects.flatMap(([s,items])=>items.map((t)=>({s,t,k:s+"::"+t})));
+function save(){try{localStorage.setItem(STORE,JSON.stringify(done))}catch(e){}}
+function updateStats(){const all=allTopics(),n=all.filter(x=>done[x.k]).length,p=all.length?Math.round(n/all.length*100):0;document.getElementById("overallPct").textContent=p+"%";document.getElementById("count").textContent=n+" / "+all.length+" topics";document.getElementById("overallFill").style.width=p+"%"}
+function render(){updateStats();const root=document.getElementById("subjects"),q=document.getElementById("search").value.trim().toLowerCase(),sf=document.getElementById("subjectFilter").value;root.innerHTML="";let shown=0;
+ subjects.forEach(([s,items])=>{if(sf&&sf!==s)return;const filtered=items.filter(t=>{const d=!!done[s+"::"+t];return (!q||(s+" "+t).toLowerCase().includes(q))&&(mode==="all"||(mode==="pending"&&!d)||(mode==="done"&&d))});if(!filtered.length)return;shown++;const n=items.filter(t=>done[s+"::"+t]).length,card=document.createElement("section");card.className="subject";
+ const head=document.createElement("div");head.className="subject-head";head.innerHTML=`<div><h2>${esc(s)}</h2><div class="meta">${n} of ${items.length} topics completed</div><div class="mini"><div style="width:${Math.round(n/items.length*100)}%"></div></div></div><div class="pct">${Math.round(n/items.length*100)}%</div><div aria-hidden="true">${openSubjects.has(s)?"⌃":"⌄"}</div>`;head.onclick=()=>{openSubjects.has(s)?openSubjects.delete(s):openSubjects.add(s);render()};card.appendChild(head);
+ if(openSubjects.has(s)){const list=document.createElement("div");list.className="items";filtered.forEach(t=>{const key=s+"::"+t,label=document.createElement("label");label.className="item"+(done[key]?" done":"");const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!done[key];cb.onchange=()=>{done[key]=cb.checked;if(!cb.checked)delete done[key];save();render()};const span=document.createElement("span");span.textContent=t;label.append(cb,span);list.appendChild(label)});card.appendChild(list)}
+ root.appendChild(card)});if(!shown)root.innerHTML='<div class="panel empty">No matching topics. Try another search or filter.</div>'}
+function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const sf=document.getElementById("subjectFilter");subjects.forEach(([s])=>{const o=document.createElement("option");o.value=s;o.textContent=s;sf.appendChild(o)});
+document.getElementById("search").addEventListener("input",render);sf.addEventListener("change",render);
+function setMode(m){mode=m;["allBtn","pendingBtn","doneBtn"].forEach((id,i)=>{document.getElementById(id).classList.toggle("primary",["all","pending","done"][i]===m)});render()}
+document.getElementById("allBtn").onclick=()=>setMode("all");document.getElementById("pendingBtn").onclick=()=>setMode("pending");document.getElementById("doneBtn").onclick=()=>setMode("done");
+document.getElementById("resetBtn").onclick=()=>{if(confirm("Reset all saved checkmarks? This cannot be undone unless you exported a backup.")){done={};save();render()}};
+document.getElementById("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({app:"Rajasthan CET 12th Level Tracker",version:1,done},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="rajasthan-cet-tracker-backup.json";a.click();URL.revokeObjectURL(url)};
+document.getElementById("importBtn").onclick=()=>document.getElementById("fileInput").click();
+document.getElementById("fileInput").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());if(!obj.done||typeof obj.done!=="object")throw Error("Invalid backup");done=obj.done;save();render();alert("Progress imported successfully!")}catch(err){alert("Could not import that file. Please choose a tracker backup JSON file.")}e.target.value=""};
+render();
+</script>
+</body></html>
